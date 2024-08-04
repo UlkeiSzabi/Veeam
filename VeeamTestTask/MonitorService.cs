@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-class MonitorService : BackgroundService
+public class MonitorService : BackgroundService
 {
     private readonly string _processName;
     private readonly TimeSpan _checkInterval;
@@ -12,11 +12,23 @@ class MonitorService : BackgroundService
 
     public MonitorService(string processName, TimeSpan checkInterval, TimeSpan lifeTime, CancellationToken cancellationToken, ILogger<MonitorService> logger)
     {
-        _processName = processName;
-        _checkInterval = checkInterval;
-        _lifeTime = lifeTime;
+        _processName = string.IsNullOrWhiteSpace(processName)
+            ? throw new ArgumentException("Process name cannot be null, empty, or whitespace. Example: 'notepad'")
+            : processName;
+
+
+        _checkInterval = checkInterval > TimeSpan.Zero
+            ? checkInterval
+            : throw new ArgumentException("Check interval must be a positive integer greater than zero. Example: 1");
+
+        _lifeTime = lifeTime > TimeSpan.Zero
+            ? lifeTime
+            : throw new ArgumentException("Life Time must be a positive integer greater than zero. Example: 5");
+
         _cancellationToken = cancellationToken;
-        _logger = logger;
+
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -35,7 +47,7 @@ class MonitorService : BackgroundService
                 }
                 catch (TaskCanceledException)
                 {
-                    _logger.LogInformation("Task was cancelled.");
+                    _logger.LogTrace("Task was cancelled.");
                     break;
                 }
             }
@@ -55,7 +67,7 @@ class MonitorService : BackgroundService
                 if(runtime >= _lifeTime)
                 {
                     process.Kill();
-                    _logger.LogInformation($"Process '{_processName}' with ID {process.Id} has been killed");
+                    _logger.LogTrace($"Process '{_processName}' with ID {process.Id} has been killed");
                 }
             }
         }
