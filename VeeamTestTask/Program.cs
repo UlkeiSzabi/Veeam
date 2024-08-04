@@ -7,7 +7,6 @@ class Program
 {
     public static async Task Main(String[] args)
     {
-        // Parse command-line arguments for process name and check interval
         string processName = "notepad"; // Default process name
         int checkInterval = 1; // Default check interval in minutes
         int lifeTime = 5; // Default lifetime in minutes
@@ -15,9 +14,9 @@ class Program
 
         if (args.Length < 3 || !int.TryParse(args[1], out int lifeTime_param) || !int.TryParse(args[2], out int interval_param))
         {
-            throw new ArgumentException("There must be exactly 4 arguments " +
+            throw new ArgumentException("There must be exactly 3 arguments " +
                 "| Ex: VeeamTestTask.exe Notepad 4 1\n" +
-                " VeeaTestTask.exe <Program> <int>(lifeTime) <int>checkInterval");
+                " VeeamTestTask.exe <Program> <int>(lifeTime) <int>checkInterval");
         }
         else
         {
@@ -27,10 +26,10 @@ class Program
         }
 
         using var cancellationTokenSource = new CancellationTokenSource();
-        using var host = Host.CreateDefaultBuilder(args)
+        using var host = Host.CreateDefaultBuilder(args) // Build Host with logging and the Background task added
             .ConfigureServices((context, services) =>
                 services.AddHostedService(provider =>
-                    new MonitorService(
+                    new MonitorService( // Provide the BackgroundService
                         processName,
                         TimeSpan.FromMinutes(checkInterval),
                         TimeSpan.FromMinutes(lifeTime),
@@ -38,7 +37,7 @@ class Program
                         provider.GetRequiredService<ILogger<MonitorService>>())))
             .ConfigureLogging(logging =>
             {
-                logging.AddConsole();
+                logging.AddConsole(); // Add Console Logging
             })
             .Build();
 
