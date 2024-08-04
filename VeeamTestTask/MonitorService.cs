@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-class MonitorService : BackgroundService
+public class MonitorService : BackgroundService
 {
     private readonly string _processName;
     private readonly TimeSpan _checkInterval;
