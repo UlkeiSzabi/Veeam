@@ -15,7 +15,9 @@ class Program
 
         if (args.Length < 3 || !int.TryParse(args[1], out int lifeTime_param) || !int.TryParse(args[2], out int interval_param))
         {
-            throw new ArgumentException("There must be exactly 4 arguments | Ex: VeeamTestTask.exe Notepad 4 1\n VeeaTestTask.exe <Program> <int>(lifeTime) <int>checkInterval");
+            throw new ArgumentException("There must be exactly 4 arguments " +
+                "| Ex: VeeamTestTask.exe Notepad 4 1\n" +
+                " VeeaTestTask.exe <Program> <int>(lifeTime) <int>checkInterval");
         }
         else
         {
