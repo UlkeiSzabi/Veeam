@@ -1,24 +1,52 @@
 
 # Project Title
 
-A brief description of what this project does and who it's for
+Veeam C# Developer in QA Test Task
 
+## Description
 
-## Running Tests
+A small .NET 8.0 console application developed in C# as part of the C# Developer in QA
+testing process.
 
-To run tests, run the following command
+The application's purpose is to monitor a user specified process, checking it in various time intervals and terminating it if its lifetime exceeds a user specified limit.
 
-```bash
-  npm run test
-```
+## Documentation
+
+### MonitorService
+
+The MonitorService class extends the BackgroundService class and implements it's ExecuteAsync Task. Through this task the given process is monitored periodically and is terminated if its lifetime exceeds the maximum.
+
+Dependencies:
+- Microsoft.Extensions.Hosting 8.0.0
+
+### Main
+
+The entry point, Main Task is responsible for:
+- Initial argument parsing and verification
+- Building and configuring the Host application with the required logging feature and background service configured.
+- Listening for the stopping token while the host is running
+  - Q for integrated terminals
+  - ENTER for redirected consoles (Bash, Cygwin etc.)
+
+## Tests
+
+The tests can be found under VeeamTests/UnitTests.cs
+
+Dependencies:
+- NUnit 4.1.0
+- NUnit3TestAdapter 4.6.0
 
 
 ## Usage/Examples
 
-```javascript
-import Component from 'my-project'
+The application expects 3 arguments:
+- process name : non-null string
+  - the process to be monitored
+- lifetime : positive integer
+  - the maximum lifetime the specified process is allowed in minutes
+- check interval : positive integer
+  - the checking interval
 
-function App() {
-  return <Component />
-}
+```Bash
+./VeeamTestTask.exe Notepad 5 1
 ```
